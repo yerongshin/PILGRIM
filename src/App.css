@@ -174,8 +174,8 @@ body {
 }
 
 .ios-checkbox input:checked ~ .checkmark {
-  background-color: #007aff;
-  border-color: #007aff;
+  background-color: #386698;
+  border-color: #386698;
 }
 
 .ios-checkbox .checkmark::after {

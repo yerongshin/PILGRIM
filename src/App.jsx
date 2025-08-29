@@ -18,13 +18,14 @@ export default function App() {
   const [feedback, setfeedback] = useState("");
 
   const groupNameMap = {
-    "1 약속들": "약속들 🤙🏻",
-    "2 향기들": "향기들 💐",
-    "3 사자들": "사자들 🦁",
-    "4 복음들": "복음들 🔊",
-    "5 부흥들": "부흥들 🔥",
-    "6 초대들": "초대들 💌",
-    "7 마음들": "마음들 🍃",
+    "1 약속들": "P 약속들",
+    "2 향기들": "I 향기들",
+    "3 사자들": "L 사자들",
+    "4 복음들": "G 복음들",
+    "5 부흥들": "R 부흥들",
+    "6 초대들": "I 초대들",
+    "7 마음들": "M 마음들",
+    "8 새가족들": "♥ 새가족들"
   };
   const classNameMap = groupNameMap;
 
@@ -84,10 +85,10 @@ export default function App() {
 
     const { error } = await supabase.from("attendance").insert(records);
     if (error) alert("저장 실패: " + error.message);
-    else setStep(7); // 제출 완료 화면으로 이동
+    else setStep(7);
   };
 
-  // 아이콘 컴포넌트
+  // 아이콘
   const BackIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
   );
@@ -95,35 +96,54 @@ export default function App() {
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
   );
 
+  const isNewFamily = selectedGroup?.name === "8 새가족들";
+  const isOikos = isNewFamily && selectedLeader?.name === "오이코스";
+
   return (
     <div className="app-container">
       <div className="card-wrapper">
         <h1 className="main-title">2025-2 필그림 출석부 📝</h1>
 
-        {/* STEP 1: 그룹 선택 */}
+        {/* STEP 1 */}
         {step === 1 && (
           <div className="card">
             <h2>1️⃣ 소속 들을 선택해주세요.</h2>
             <div className="btn-group">
-              {groups.map((g) => (
-                <button key={g.id} className="btn btn-primary" onClick={() => { setSelectedGroup(g); setStep(2); }}>
-                  {groupNameMap[g.name] || g.name}
-                </button>
-              ))}
+              {groups
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((g) => (
+                  <button
+                    key={g.id}
+                    className="btn btn-primary"
+                    onClick={() => { setSelectedGroup(g); setStep(2); }}
+                  >
+                    {groupNameMap[g.name] || g.name}
+                  </button>
+                ))}
             </div>
           </div>
         )}
 
-        {/* STEP 2: 반 선택 */}
+        {/* STEP 2 */}
         {step === 2 && (
           <div className="card">
-            <h2>2️⃣ 리더님의 이름을 선택해주세요.</h2>
+            <h2>
+              2️⃣ {isNewFamily ? "새가족 그룹의 반을 선택해주세요." : "리더님의 이름을 선택해주세요."}
+            </h2>
             <div className="btn-group">
-              {classes.map((c) => (
-                <button key={c.id} className="btn btn-primary" onClick={() => { setSelectedLeader(c); setStep(3); }}>
-                  {classNameMap[c.name] || c.name}
-                </button>
-              ))}
+              {classes
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((c) => (
+                  <button
+                    key={c.id}
+                    className="btn btn-primary"
+                    onClick={() => { setSelectedLeader(c); setStep(3); }}
+                  >
+                    {classNameMap[c.name] || c.name}
+                  </button>
+                ))}
             </div>
             <br />
             <button className="btn btn-secondary" onClick={() => setStep(1)}><BackIcon /> 뒤로가기</button>
@@ -134,14 +154,18 @@ export default function App() {
         {step === 3 && (
           <div className="card">
             <h2>3️⃣ [사랑의교회 주일예배] 참석한 지체들의 이름을 선택해주세요.</h2>
-            <p>✔️ 현장 참석만 포함입니다!<br />✔️ 타교회 예배에 참석한 경우는 해당되지 않습니다.<br />✔️ 참석인원이 없을 경우 반드시 '기타' 항목을 선택하여 '없음'을 작성해주세요.</p>
-            {students.map((s) => (
-              <label key={s.id} className="ios-checkbox">
-                <input type="checkbox" checked={sundayAttendance.includes(s.id)} onChange={() => { setSundayAttendance(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]); }} />
-                <span className="checkmark"></span>
-                {s.name}
-              </label>
-            ))}
+            <p>✔️ 현장 참석만 포함입니다!<br />✔️ 타교회 예배에 참석한 경우는 해당되지 않습니다.<br /></p>
+            {students
+              .slice()
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((s) => (
+                <label key={s.id} className="ios-checkbox">
+                  <input type="checkbox" checked={sundayAttendance.includes(s.id)} onChange={() => { setSundayAttendance(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]); }} />
+                  <span className="checkmark"></span>
+                  {s.name}
+                </label>
+              ))
+            }
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(2)}><BackIcon /> 뒤로가기</button>
               <button className="btn btn-primary" onClick={() => setStep(4)}>다음</button>
@@ -153,28 +177,45 @@ export default function App() {
         {step === 4 && (
           <div className="card">
             <h2>4️⃣ [대학5부 필그림 집회] 참석한 지체들의 이름을 선택해주세요.</h2>
-            <p>✔️ 현장 참석 + 온라인 모두 포함입니다!<br />✔️ 지각 또는 조퇴 모두 동일하게 출석으로 선택해주세요.<br />✔️ 참석인원이 없을 경우 반드시 '기타' 항목을 선택하여 '없음'을 작성해주세요.</p>
-            {students.map((s) => (
-              <label key={s.id} className="ios-checkbox">
-                <input type="checkbox" checked={pilgrimAttendance.includes(s.id)} onChange={() => { setpilgrimAttendance(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]); }} />
-                <span className="checkmark"></span>
-                {s.name}
-              </label>
-            ))}
-            <label>💻 위 질문에서 선택한 지체들 중 대학부 집회를 [온라인]으로 참석한 지체가 있다면, 해당 지체의 이름을 작성해주세요. </label>
+            <p>✔️ 현장 참석 + 온라인 모두 포함입니다!<br />✔️ 지각 또는 조퇴 모두 동일하게 출석으로 선택해주세요.</p>
+            {students
+              .slice()
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((s) => (
+                <label key={s.id} className="ios-checkbox">
+                  <input type="checkbox" checked={pilgrimAttendance.includes(s.id)} onChange={() => { setpilgrimAttendance(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]); }} />
+                  <span className="checkmark"></span>
+                  {s.name}
+                </label>
+              ))
+            }
+            <label>💻 위 질문에서 선택한 지체 중 대학부 집회를 [온라인]으로 참석한 지체가 있다면, 해당 지체의 이름을 작성해주세요.</label>
             <input className="ios-input" type="text" value={onlineMembers} onChange={(e) => setOnlineMembers(e.target.value)} />
-            <label>❎ 재라인업 및 등반 등의 사유로 위 문항의 선택지에 없는 지체가 있다면 기입해주세요. </label>
-            <p>✔️ 작성 양식 : 재라인업 신예현 or 등반 신예현</p>
-            <input className="ios-input" type="text" value={missedMembers} onChange={(e) => setmissedMembers(e.target.value)} />
+            {/* 새가족 그룹이면서 오이코스인 경우 STEP5,6 건너뛰도록 재라인업 제거 */}
+            {!(isNewFamily) && (
+              <>
+                <label>❎ 재라인업 및 등반 등의 사유로 위 문항의 선택지에 없는 지체가 있다면 기입해주세요. </label>
+                <p>✔️ 작성 양식 : 재라인업 신예현 or 등반 신예현</p>
+                <input className="ios-input" type="text" value={missedMembers} onChange={(e) => setmissedMembers(e.target.value)} />
+              </>
+            )}
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(3)}><BackIcon /> 뒤로가기</button>
-              <button className="btn btn-primary" onClick={() => setStep(5)}>다음</button>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  if (isOikos) saveAttendance(); // 오이코스는 바로 제출
+                  else setStep(5);
+                }}
+              >
+                {isOikos ? <><CheckIcon /> 제출</> : "다음"}
+              </button>
             </div>
           </div>
         )}
 
         {/* STEP 5 */}
-        {step === 5 && (
+        {!isOikos && step === 5 && (
           <div className="card">
             <h2>5️⃣ 방문자가 있다면 아래 양식에 맞추어 기입해주세요.</h2>
             <p>✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다.<br />✔️ 작성 양식) 방문자 신예현 / 인도자 이재원</p>
@@ -187,10 +228,9 @@ export default function App() {
         )}
 
         {/* STEP 6 */}
-        {step === 6 && (
+        {!isOikos && step === 6 && (
           <div className="card">
-            <h2>집회 관련 피드백 및 하고 싶은 말이 있으시다면, 여기에 적어주세요!</h2>
-            <p>이번 한 주도 하나님의 은혜가 가득하기를 간절히 소망합니다, 사랑하고 축복합니다 🧡</p>
+            <h2>{isNewFamily ? "주차별 새가족 인원수를 작성해주세요." : "집회 관련 피드백 및 하고 싶은 말이 있으시다면, 여기에 적어주세요!"}</h2>
             <input className="ios-input" type="text" value={feedback} onChange={(e) => setfeedback(e.target.value)} />
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(5)}><BackIcon /> 뒤로가기</button>
