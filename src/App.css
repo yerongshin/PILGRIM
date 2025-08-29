@@ -6,7 +6,14 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f9fafb;
-  height: 100vh;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 .app-container {
@@ -19,26 +26,28 @@ body {
 
 .card-wrapper {
   width: 100%;
-  max-width: 400px;
+  max-width: 480px;
+  padding: 0 12px;
 }
 
 .card {
   background: white;
   padding: 20px;
   border-radius: 16px;
-  max-width: 480px;
   width: 100%;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   text-align: left;
   margin-bottom: 16px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* 메인 타이틀 */
 .main-title {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
   font-weight: 700;
   margin-bottom: 20px;
   color: #333;
@@ -46,20 +55,26 @@ body {
 
 /* STEP 제목 */
 .card h2 {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
   font-weight: 600;
-  margin-bottom: -5px; /* 질문과 설명문 간격 */
+  margin-bottom: 4px; /* 질문과 설명문 간격 */
   color: #1c1c1e;
-  text-align: left;
 }
 
 /* 설명문 */
 .card p {
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
   color: #666;
-  margin-bottom: 10px; /* 설명문과 옵션 간격 */
+  margin-bottom: 10px;
   line-height: 1.4;
-  text-align: left;
+}
+
+/* label 밑 설명문 조정 */
+.card label + p {
+  margin-top: -2px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #666;
 }
 
 /* 보조 설명 */
@@ -87,7 +102,7 @@ body {
   padding: 14px 20px;
   border-radius: 16px;
   border: none;
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
@@ -125,7 +140,7 @@ body {
   padding-left: 40px;
   margin: 10px 0;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   user-select: none;
 }
 
@@ -177,25 +192,21 @@ body {
   padding: 14px;
   margin-top: 6px;
   margin-bottom: 12px;
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   border-radius: 14px;
   border: 1px solid #d1d1d6;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-
-.ios-input:focus {
-  border-color: #007aff;
-  box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
 }
 
 /* 버튼 행 배치 (STEP 3~6) */
 .btn-row {
   display: flex;
-  justify-content: space-between; /* 좌측/우측 배치 */
-  margin-top: 24px; /* 옵션과 버튼 사이 넉넉하게 */
+  justify-content: space-between;
+  margin-top: 24px;
+  flex-wrap: wrap; /* 모바일 좁은 화면도 자동 줄바꿈 */
+  gap: 8px;
 }
 
 /* 제출 버튼 행 (마지막 step) */
@@ -208,24 +219,39 @@ body {
 /* Label (온라인 참석자 / 재라인업자 등) */
 .card label {
   display: block;
-  font-size: 0.95rem;
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 500;
   color: #333;
-  margin-top: 16px;   /* 위 요소와 간격 */
-  margin-bottom: 8px; /* 입력창과 간격 */
-  text-align: left;
+  margin-top: 16px;
+  margin-bottom: 8px;
   line-height: 1.4;
 }
 
-/* STEP 7 완료 버튼 간격 */
+/* STEP 7 완료 버튼 */
 .card .complete-btn {
-  margin-top: 24px; /* 제목과 버튼 간격 */
-  width: 100%;      /* 다른 버튼과 동일한 폭 */
+  margin-top: 24px;
+  width: 100%;
 }
 
-.card label + p {
-  margin-top: -2px;   /* 위 label과 더 가까워지도록 */
-  margin-bottom: 8px; /* 아래 input과 균형 맞추기 */
-  font-size: 0.85rem; /* 설명문은 조금 더 작게 */
-  color: #666;
+/* 모바일 대응 미디어 쿼리 */
+@media (max-width: 480px) {
+  .card-wrapper {
+    max-width: 95%;
+  }
+
+  .card h2 {
+    margin-bottom: 4px;
+  }
+
+  .card p {
+    margin-bottom: 8px;
+  }
+
+  .btn {
+    padding: 12px 16px;
+  }
+
+  .ios-input {
+    padding: 12px;
+  }
 }
