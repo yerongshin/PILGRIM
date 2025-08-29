@@ -125,7 +125,7 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <br></br>
+            <br />
             <button className="btn btn-secondary" onClick={() => setStep(1)}><BackIcon /> 뒤로가기</button>
           </div>
         )}
@@ -134,7 +134,7 @@ export default function App() {
         {step === 3 && (
           <div className="card">
             <h2>3️⃣ [사랑의교회 주일예배] 참석한 지체들의 이름을 선택해주세요.</h2>
-            <p>✔️ 현장 참석만 포함입니다!<br></br>✔️ 타교회 예배에 참석한 경우는 해당되지 않습니다.<br></br>✔️ 참석인원이 없을 경우 반드시 '기타' 항목을 선택하여 '없음'을 작성해주세요.</p>
+            <p>✔️ 현장 참석만 포함입니다!<br />✔️ 타교회 예배에 참석한 경우는 해당되지 않습니다.<br />✔️ 참석인원이 없을 경우 반드시 '기타' 항목을 선택하여 '없음'을 작성해주세요.</p>
             {students.map((s) => (
               <label key={s.id} className="ios-checkbox">
                 <input type="checkbox" checked={sundayAttendance.includes(s.id)} onChange={() => { setSundayAttendance(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]); }} />
@@ -153,7 +153,7 @@ export default function App() {
         {step === 4 && (
           <div className="card">
             <h2>4️⃣ [대학5부 필그림 집회] 참석한 지체들의 이름을 선택해주세요.</h2>
-            <p>✔️ 현장 참석 + 온라인 모두 포함입니다!<br></br>✔️ 지각 또는 조퇴 모두 동일하게 출석으로 선택해주세요.<br></br>✔️ 참석인원이 없을 경우 반드시 '기타' 항목을 선택하여 '없음'을 작성해주세요.</p>
+            <p>✔️ 현장 참석 + 온라인 모두 포함입니다!<br />✔️ 지각 또는 조퇴 모두 동일하게 출석으로 선택해주세요.<br />✔️ 참석인원이 없을 경우 반드시 '기타' 항목을 선택하여 '없음'을 작성해주세요.</p>
             {students.map((s) => (
               <label key={s.id} className="ios-checkbox">
                 <input type="checkbox" checked={pilgrimAttendance.includes(s.id)} onChange={() => { setpilgrimAttendance(prev => prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]); }} />
@@ -177,7 +177,7 @@ export default function App() {
         {step === 5 && (
           <div className="card">
             <h2>5️⃣ 방문자가 있다면 아래 양식에 맞추어 기입해주세요.</h2>
-            <p>✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다.<br></br>✔️ 작성 양식) 방문자 신예현 / 인도자 이재원</p>
+            <p>✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다.<br />✔️ 작성 양식) 방문자 신예현 / 인도자 이재원</p>
             <input className="ios-input" type="text" value={visitors} onChange={(e) => setVisitors(e.target.value)} />
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(4)}><BackIcon /> 뒤로가기</button>
@@ -186,7 +186,7 @@ export default function App() {
           </div>
         )}
 
-        {/* STEP 6 (마지막) */}
+        {/* STEP 6 */}
         {step === 6 && (
           <div className="card">
             <h2>집회 관련 피드백 및 하고 싶은 말이 있으시다면, 여기에 적어주세요!</h2>
@@ -199,8 +199,7 @@ export default function App() {
           </div>
         )}
 
-
-        {/* STEP 7: 제출 완료 화면 */}
+        {/* STEP 7 */}
         {step === 7 && (
           <div className="card">
             <h2>✅ 출석 제출이 완료되었습니다!</h2>
