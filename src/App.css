@@ -1,105 +1,231 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css');
+/* App.css */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
 
 body {
-  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  background: #d2d7df;
+  font-family: "Pretendard", sans-serif;
   margin: 0;
   padding: 0;
+  background-color: #f9fafb;
+  height: 100vh;
 }
 
-.container {
-  max-width: 350px;
-  margin: 40px auto;
-  padding: 10px 20px;
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  min-height: 100vh;
 }
 
-h1 {
-  text-align: center;
-  color: #1e3a8a; /* 남색 포인트 */
-  margin-bottom: 20px;
-  font-size: 28px;
+.card-wrapper {
+  width: 100%;
+  max-width: 400px;
 }
 
 .card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  background: white;
   padding: 20px;
-  margin-bottom: 20px;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 16px;
 }
 
-h2 {
-  color: #1e40af; /* 조금 밝은 남색 */
-  margin-top: 0;
+/* 메인 타이틀 */
+.main-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin-bottom: 20px;
+  color: #333;
 }
 
+/* STEP 제목 */
+.card h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: -5px; /* 질문과 설명문 간격 */
+  color: #1c1c1e;
+  text-align: left;
+}
+
+/* 설명문 */
+.card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 10px; /* 설명문과 옵션 간격 */
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* 보조 설명 */
+.description {
+  font-size: 0.85rem;
+  color: #8e8e93;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+/* 버튼 그룹 (STEP 1,2) */
 .btn-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 15px;
+  margin-top: 12px;
 }
 
+/* 버튼 공통 */
 .btn {
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s;
-  width: 100%;
-  text-align: center;
-}
-
-.btn.primary {
-  background-color: #1e40af; /* 남색 */
-  color: #fff;
-}
-
-.btn.primary:hover {
-  background-color: #3b82f6; /* 하늘색 강조 */
-}
-
-.btn.secondary {
-  background-color: #e0f2fe; /* 하늘색 배경 */
-  color: #1e40af;
-}
-
-.btn.secondary:hover {
-  background-color: #bae6fd;
-}
-
-.students-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-}
-
-.student-item {
   display: flex;
   align-items: center;
-  padding: 8px 0;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  border: none;
   font-size: 16px;
-  color: #1e3a8a;
-  background: transparent;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-input[type="checkbox"] {
-  margin-right: 12px;
-  width: 18px;
-  height: 18px;
+.btn:active {
+  transform: scale(0.97);
 }
 
-/* 반응형 */
-@media (max-width: 500px) {
-  .container {
-    margin: 20px;
-    padding: 10px;
-  }
+.btn-primary {
+  background: #5d80a6;
+  color: white;
+}
 
-  .btn {
-    font-size: 15px;
-    padding: 10px;
-  }
+.btn-primary:hover {
+  background: #5d80a6;
+}
+
+.btn-secondary {
+  background: #f2f2f7;
+  color: #1c1c1e;
+}
+
+.btn-secondary:hover {
+  background: #e5e5ea;
+}
+
+/* iOS 스타일 체크박스 */
+.ios-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  padding-left: 40px;
+  margin: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+
+.ios-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.ios-checkbox .checkmark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #f2f2f7;
+  border-radius: 12px;
+  border: 1px solid #c7c7cc;
+  transition: background 0.2s;
+}
+
+.ios-checkbox input:checked ~ .checkmark {
+  background-color: #007aff;
+  border-color: #007aff;
+}
+
+.ios-checkbox .checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.ios-checkbox input:checked ~ .checkmark::after {
+  display: block;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* iOS 스타일 입력 필드 */
+.ios-input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border-radius: 14px;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.ios-input:focus {
+  border-color: #007aff;
+  box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
+}
+
+/* 버튼 행 배치 (STEP 3~6) */
+.btn-row {
+  display: flex;
+  justify-content: space-between; /* 좌측/우측 배치 */
+  margin-top: 24px; /* 옵션과 버튼 사이 넉넉하게 */
+}
+
+/* 제출 버튼 행 (마지막 step) */
+.submit-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+/* Label (온라인 참석자 / 재라인업자 등) */
+.card label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  margin-top: 16px;   /* 위 요소와 간격 */
+  margin-bottom: 8px; /* 입력창과 간격 */
+  text-align: left;
+  line-height: 1.4;
+}
+
+/* STEP 7 완료 버튼 간격 */
+.card .complete-btn {
+  margin-top: 24px; /* 제목과 버튼 간격 */
+  width: 100%;      /* 다른 버튼과 동일한 폭 */
+}
+
+.card label + p {
+  margin-top: -2px;   /* 위 label과 더 가까워지도록 */
+  margin-bottom: 8px; /* 아래 input과 균형 맞추기 */
+  font-size: 0.85rem; /* 설명문은 조금 더 작게 */
+  color: #666;
 }
