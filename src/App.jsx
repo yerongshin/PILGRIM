@@ -190,13 +190,13 @@ export default function App() {
               ))
             }
             <label>💻 위 질문에서 선택한 지체 중 대학부 집회를 [온라인]으로 참석한 지체가 있다면, 해당 지체의 이름을 작성해주세요.</label>
-            <input className="ios-input" type="text" value={onlineMembers} onChange={(e) => setOnlineMembers(e.target.value)} />
+            <textarea className="ios-input" type="text" value={onlineMembers} onChange={(e) => setOnlineMembers(e.target.value)} />
             {/* 새가족 그룹이면서 오이코스인 경우 STEP5,6 건너뛰도록 재라인업 제거 */}
             {!(isNewFamily) && (
               <>
                 <label>❎ 재라인업 및 등반 등의 사유로 위 문항의 선택지에 없는 지체가 있다면 기입해주세요. </label>
                 <p>✔️ 작성 양식 : 재라인업 신예현 or 등반 신예현</p>
-                <input className="ios-input" type="text" value={missedMembers} onChange={(e) => setmissedMembers(e.target.value)} />
+                <textarea className="ios-input" type="text" value={missedMembers} onChange={(e) => setmissedMembers(e.target.value)} />
               </>
             )}
             <div className="btn-row">
@@ -219,7 +219,7 @@ export default function App() {
           <div className="card">
             <h2>5️⃣ 방문자가 있다면 아래 양식에 맞추어 기입해주세요.</h2>
             <p>✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다.<br />✔️ 작성 양식) 방문자 신예현 / 인도자 이재원</p>
-            <input className="ios-input" type="text" value={visitors} onChange={(e) => setVisitors(e.target.value)} />
+            <textarea className="ios-input" type="text" value={visitors} onChange={(e) => setVisitors(e.target.value)} />
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(4)}><BackIcon /> 뒤로가기</button>
               <button className="btn btn-primary" onClick={() => setStep(6)}>다음</button>
@@ -230,14 +230,61 @@ export default function App() {
         {/* STEP 6 */}
         {!isOikos && step === 6 && (
           <div className="card">
-            <h2>{isNewFamily ? "주차별 새가족 인원수를 작성해주세요." : "집회 관련 피드백 및 하고 싶은 말이 있으시다면, 여기에 적어주세요!"}</h2>
-            <input className="ios-input" type="text" value={feedback} onChange={(e) => setfeedback(e.target.value)} />
+            <h2>
+              {isNewFamily
+                ? "주차별 새가족 인원수를 작성해주세요."
+                : "집회 관련 피드백 및 하고 싶은 말이 있으시다면, 여기에 적어주세요!"}
+            </h2>
+
+            {/* 새가족 안내 문구 및 복사 버튼 */}
+            {isNewFamily && (
+              <div style={{ marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <p style={{ margin: 0 }}>작성 양식 복사</p>
+                {/* 작은 아이콘 버튼 */}
+                <button
+                  className="btn btn-icon" // CSS에서 .btn-icon 크기 조정 가능
+                  style={{
+                    padding: "4px",
+                    width: "28px",
+                    height: "28px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onClick={() =>
+                    setfeedback(`1주차 : 
+2주차 : 
+3주차 : 
+4주차 및 등반 :`)
+                  }
+                  title="양식 복사"
+                >
+                  {/* 간단한 복사 아이콘 SVG */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            <textarea
+              className="ios-input"
+              type="text"
+              value={feedback}
+              onChange={(e) => setfeedback(e.target.value)}
+            />
             <div className="btn-row">
-              <button className="btn btn-secondary" onClick={() => setStep(5)}><BackIcon /> 뒤로가기</button>
-              <button className="btn btn-primary" onClick={saveAttendance}><CheckIcon /> 제출</button>
+              <button className="btn btn-secondary" onClick={() => setStep(5)}>
+                <BackIcon /> 뒤로가기
+              </button>
+              <button className="btn btn-primary" onClick={saveAttendance}>
+                <CheckIcon /> 제출
+              </button>
             </div>
           </div>
         )}
+
 
         {/* STEP 7 */}
         {step === 7 && (
