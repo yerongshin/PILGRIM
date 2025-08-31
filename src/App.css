@@ -286,9 +286,9 @@ body {
 
 .popup-box {
   background: #f0eaea;
-  padding: 30px;
+  padding: 20px;
   border-radius: 16px;
-  max-width: 400px;
+  max-width: 450px;
   width: 80%;
   text-align: center;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
