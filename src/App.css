@@ -268,3 +268,34 @@ body {
     padding: 12px;
   }
 }
+
+/* 모달 팝업 오버레이 */
+/* 모달 팝업 */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* 반투명 배경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-box {
+  background: #f0eaea;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 400px;
+  width: 80%;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
