@@ -74,6 +74,7 @@ body {
 .card p {
   font-size: clamp(0.85rem, 1.8vw, 1rem);
   color: #666;
+  margin-top: 2px;
   margin-bottom: 10px;
   line-height: 1.4;
   word-break: break-word;
