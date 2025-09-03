@@ -16,7 +16,6 @@ export default function App() {
   const [missedMembers, setmissedMembers] = useState("");
   const [visitors, setVisitors] = useState("");
   const [feedback, setfeedback] = useState("");
-  const [showPopup, setShowPopup] = useState(true); // ✅ 모달 팝업 상태
 
   const groupNameMap = {
     "1 약속들": "P 약속들",
@@ -28,6 +27,7 @@ export default function App() {
     "7 마음들": "M 마음들",
     "8 새가족들": "♥ 새가족들",
   };
+
   const classNameMap = groupNameMap;
 
   // 그룹 가져오기
@@ -71,6 +71,7 @@ export default function App() {
   // 출석 저장
   const saveAttendance = async () => {
     const today = new Date().toISOString().split("T")[0];
+
     const records = students.map((s) => ({
       date: today,
       group_name: selectedGroup.name,
@@ -91,42 +92,61 @@ export default function App() {
 
   // 아이콘
   const BackIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
   );
+
   const CheckIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
   );
 
   const isNewFamily = selectedGroup?.name === "8 새가족들";
   const isOikos = isNewFamily && selectedLeader?.name === "오이코스";
 
+  let totalSteps = 6;
+  if (isOikos) totalSteps = 4;
+  else if (isNewFamily) totalSteps = 6;
+
   return (
     <div className="app-container">
-      {/* ✅ 모달 팝업 */}
-      {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup-box">
-            <h2 className="text-lg font-semibold mb-4">📢 출석부 작성 전 필독사항 </h2>
-            <p className="mb-6">
-              <b>➀ 출석은 샘원들에게 직접 물어보기</b> <br />관상 X 지레짐작 X 입니다 !! <br />샘모임 시간 전에 출석 확인하는 시간을 루틴으로 가져가시는 것을 적극추천합니다 ㅎㅎ <br /><br />
-              <b>➁ 유학생 및 군인 출석도 확인하기</b> <br /> 지체들이 온라인으로 필그림 집회를 드리는 경우도 많습니다 !! 누락되지 않도록 꼭 살펴주세요 :) <br /><br />
-              <b>➂ 마지막 문항은 행정간사만 확인하므로, 자유롭게 남겨주세요!</b> <br />여러분이 남겨주신 말들 보는 재미가 쏠쏠합니다 😁 <br /><br />
-              감사합니다 ❤️ <br />이번 텀 출석부 잘 부탁드려요 !!
-            </p>
-            {/* ✅ 버튼 중앙 정렬 */}
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowPopup(false)}
-              >
-                확인했습니다!
-              </button>
-            </div>
+      <div className="card-wrapper">
+        {/* 프로그레스 바 */}
+        <div className="progress-container">
+          <div
+            className="progress-bar"
+            style={{ width: `${(step / totalSteps) * 100}%` }}
+          ></div>
+          <div
+            className="runner"
+            style={{
+              left: `calc(${(step / totalSteps) * 100}% - 12px)`, // 캐릭터 크기 고려
+            }}
+          >
+            🐑
           </div>
         </div>
-      )}
 
-      <div className="card-wrapper">
         <h1 className="main-title">2025-2 필그림 출석부 📝</h1>
 
         {/* STEP 1 */}
@@ -189,7 +209,9 @@ export default function App() {
         {/* STEP 3 */}
         {step === 3 && (
           <div className="card">
-            <h2>3️⃣ [사랑의교회 주일예배] 참석한 지체들의 이름을 선택해주세요.</h2>
+            <h2>
+              3️⃣ [사랑의교회 주일예배] 참석한 지체들의 이름을 선택해주세요.
+            </h2>
             <p>
               ✔️ 현장 참석만 포함입니다!
               <br />
@@ -230,7 +252,9 @@ export default function App() {
         {/* STEP 4 */}
         {step === 4 && (
           <div className="card">
-            <h2>4️⃣ [대학5부 필그림 집회] 참석한 지체들의 이름을 선택해주세요.</h2>
+            <h2>
+              4️⃣ [대학5부 필그림 집회] 참석한 지체들의 이름을 선택해주세요.
+            </h2>
             <p>
               ✔️ 현장 참석 + 온라인 모두 포함입니다!
               <br />
@@ -256,9 +280,10 @@ export default function App() {
                   {s.name}
                 </label>
               ))}
+
             <label>
-              💻 위 질문에서 선택한 지체 중 대학부 집회를 [온라인]으로 참석한 지체가 있다면,
-              해당 지체의 이름을 작성해주세요.
+              💻 위 질문에서 선택한 지체 중 대학부 집회를 [온라인]으로 참석한
+              지체가 있다면, 해당 지체의 이름을 작성해주세요.
             </label>
             <textarea
               className="ios-input"
@@ -266,11 +291,13 @@ export default function App() {
               value={onlineMembers}
               onChange={(e) => setOnlineMembers(e.target.value)}
             />
+
+            {/* 새가족 그룹이면서 오이코스인 경우 STEP5,6 건너뛰도록 재라인업 제거 */}
             {!isNewFamily && (
               <>
                 <label>
-                  ❎ 재라인업 및 등반 등의 사유로 위 문항의 선택지에 없는 지체가 있다면
-                  기입해주세요.{" "}
+                  ❎ 재라인업 및 등반 등의 사유로 위 문항의 선택지에 없는 지체가
+                  있다면 기입해주세요.
                 </label>
                 <p>✔️ 작성 양식 : 재라인업 신예현 or 등반 신예현</p>
                 <textarea
@@ -281,6 +308,7 @@ export default function App() {
                 />
               </>
             )}
+
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(3)}>
                 <BackIcon /> 뒤로가기
@@ -288,7 +316,7 @@ export default function App() {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  if (isOikos) saveAttendance();
+                  if (isOikos) saveAttendance(); // 오이코스는 바로 제출
                   else setStep(5);
                 }}
               >
@@ -309,7 +337,8 @@ export default function App() {
           <div className="card">
             <h2>5️⃣ 방문자가 있다면 아래 양식에 맞추어 기입해주세요.</h2>
             <p>
-              ✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다.
+              ✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한
+              사람을 말합니다.
               <br />
               ✔️ 작성 양식) 방문자 신예현 / 인도자 이재원
             </p>
@@ -338,11 +367,8 @@ export default function App() {
                 ? "주차별 새가족 인원수를 작성해주세요."
                 : "집회 관련 피드백 및 하고 싶은 말이 있으시다면, 여기에 적어주세요!"}
             </h2>
-            <p>
-              작성해주신 내용은 행정간사만 확인합니다! 자유롭게 남겨주세요 :) <br />
-              사랑하고 축복합니다 목자님들 🤎
-            </p>
 
+            {/* 새가족 안내 문구 및 복사 버튼 */}
             {isNewFamily && (
               <div
                 style={{
@@ -353,6 +379,7 @@ export default function App() {
                 }}
               >
                 <p style={{ margin: 0 }}>작성 양식 복사</p>
+                {/* 작은 아이콘 버튼 */}
                 <button
                   className="btn btn-icon"
                   style={{
@@ -364,10 +391,9 @@ export default function App() {
                     justifyContent: "center",
                   }}
                   onClick={() =>
-                    setfeedback(`1주차 : 
-2주차 : 
-3주차 : 
-4주차 및 등반 :`)
+                    setfeedback(
+                      "1주차:\n2주차:\n3주차:\n4주차 및 등반"
+                    )
                   }
                   title="양식 복사"
                 >
@@ -381,7 +407,14 @@ export default function App() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1"></rect>
+                    <rect
+                      x="9"
+                      y="9"
+                      width="6"
+                      height="6"
+                      rx="1"
+                      ry="1"
+                    ></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
                 </button>

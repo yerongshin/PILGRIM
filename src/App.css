@@ -299,3 +299,45 @@ body {
   justify-content: center;
   margin-top: 20px;
 }
+
+.progress-container {
+  position: fixed;         /* 화면 상단에 고정 */
+  top: 16px;               /* 상단에서 16px 떨어지도록 */
+  left: 50%;               /* 화면 가운데 정렬 */
+  transform: translateX(-50%); /* 가로 중앙으로 이동 */
+  width: 90%;              /* 화면보다 조금 짧게 */
+  max-width: 480px;        /* 최대 너비 */
+  height: 18px;
+  background-color: rgba(238, 238, 238, 0.6); /* 반투명 */
+  border-radius: 12px;
+  z-index: 1000;
+  overflow: visible;
+}
+
+
+/* 카드 내용이 바에 가려지지 않도록 */
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+  width: 100%;
+  padding-top: 60px;   /* 프로그레스 바 높이 + 여유 */
+}
+
+
+.progress-bar {
+  height: 100%;
+  background-color: rgba(109, 134, 174, 0.727);
+  border-radius: 10px 0 0 12px;
+  transition: width 0.5s ease;
+}
+
+.runner {
+  position: absolute;
+  top: -8px; /* -8px → -4px로 조금 내려서 보이게 */
+  font-size: 24px;
+  transition: left 0.5s ease;
+  transform: scaleX(-1);
+}
+
