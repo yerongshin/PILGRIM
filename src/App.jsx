@@ -17,6 +17,14 @@ export default function App() {
   const [visitors, setVisitors] = useState("");
   const [feedback, setfeedback] = useState("");
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("admin") === "true") {
+      setIsAdmin(true);
+      setStep(8);
+    }
+  }, []);
+
   const groupNameMap = {
     "1 약속들": "P 약속들",
     "2 향기들": "I 향기들",
@@ -455,6 +463,97 @@ export default function App() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+export default function AdminAttendanceStatus() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [groups, setGroups] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [statusList, setStatusList] = useState([]);
+
+  // 관리자 여부 체크
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("admin") === "true") {
+      setIsAdmin(true);
+    }
+  }, []);
+
+  // 그룹/반 가져오기
+  useEffect(() => {
+    async function fetchData() {
+      const { data: groupsData } = await supabase.from("groups").select("*");
+      const { data: classesData } = await supabase.from("classes").select("*");
+      setGroups(groupsData || []);
+      setClasses(classesData || []);
+    }
+    fetchData();
+  }, []);
+
+  // 제출 상태 계산
+  useEffect(() => {
+    if (!isAdmin || classes.length === 0) return;
+
+    async function fetchStatus() {
+      const today = new Date();
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(today.getDate() - 3);
+
+      const todayISO = today.toISOString().split("T")[0];
+      const threeDaysAgoISO = threeDaysAgo.toISOString().split("T")[0];
+
+      // 최근 3일간 출석 데이터
+      const { data: attendanceData } = await supabase
+        .from("attendance")
+        .select("*")
+        .gte("date", threeDaysAgoISO)
+        .lte("date", todayISO);
+
+      const status = classes.map((c) => {
+        // 해당 반 제출 여부 확인
+        const submitted = attendanceData.some(
+          (a) => a.leader === c.name
+        );
+        return {
+          className: c.name,
+          groupName: groups.find((g) => g.id === c.group_id)?.name || "",
+          submitted,
+        };
+      });
+
+      setStatusList(status);
+    }
+
+    fetchStatus();
+  }, [isAdmin, classes, groups]);
+
+  if (!isAdmin) return null;
+
+  return (
+    <div className="app-container">
+      <h1>📝 관리자 모드 - 출석 제출 현황</h1>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>그룹</th>
+            <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>반</th>
+            <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>제출 상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          {statusList.map((s, idx) => (
+            <tr key={idx}>
+              <td style={{ padding: "8px" }}>{s.groupName}</td>
+              <td style={{ padding: "8px" }}>{s.className}</td>
+              <td style={{ padding: "8px", color: s.submitted ? "black" : "red", fontWeight: s.submitted ? "normal" : "bold" }}>
+                {s.submitted ? "제출 완료" : "미제출"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
