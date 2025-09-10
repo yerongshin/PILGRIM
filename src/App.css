@@ -210,6 +210,9 @@ body {
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
   word-break: break-word;
+  background-color: white; /* 배경색 명시 */
+  color: #1c1c1e;          /* 글자색 */
+
 }
 
 /* 버튼 행 배치 (STEP 3~6) */
@@ -359,13 +362,6 @@ body {
   background-color: #f4f4f4;
 }
 
-.ios-input {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 50%;
-  max-width: 200px;
-}
 
 .card {
   background-color: #f9f9f9;

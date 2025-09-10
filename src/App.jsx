@@ -1,5 +1,3 @@
-
-
 // App.jsx
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
@@ -12,7 +10,6 @@ export default function App() {
 
   if (isAdmin) return <AdminAttendanceStatus />;
 
-  // 기존 일반 사용자 출석부 로직
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [classes, setClasses] = useState([]);
@@ -22,9 +19,9 @@ export default function App() {
   const [sundayAttendance, setSundayAttendance] = useState([]);
   const [pilgrimAttendance, setpilgrimAttendance] = useState([]);
   const [onlineMembers, setOnlineMembers] = useState("");
-  const [missedMembers, setmissedMembers] = useState("");
+  const [missedMembers, setMissedMembers] = useState("");
   const [visitors, setVisitors] = useState("");
-  const [feedback, setfeedback] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   const groupNameMap = {
     "1 약속들": "P 약속들",
@@ -36,6 +33,7 @@ export default function App() {
     "7 마음들": "M 마음들",
     "8 새가족들": "♥ 새가족들",
   };
+
   const classNameMap = groupNameMap;
 
   // 그룹 가져오기
@@ -76,8 +74,10 @@ export default function App() {
     fetchStudents();
   }, [selectedLeader]);
 
+  // 출석 저장
   const saveAttendance = async () => {
     const today = new Date().toISOString().split("T")[0];
+
     const records = students.map((s) => ({
       date: today,
       group_name: selectedGroup.name,
@@ -90,6 +90,7 @@ export default function App() {
       visitor_names: visitors,
       feedback: feedback,
     }));
+
     const { error } = await supabase.from("attendance").insert(records);
     if (error) alert("저장 실패: " + error.message);
     else setStep(7);
@@ -97,18 +98,38 @@ export default function App() {
 
   // 아이콘
   const BackIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
+
   const CheckIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 
   const isNewFamily = selectedGroup?.name === "8 새가족들";
   const isOikos = isNewFamily && selectedLeader?.name === "오이코스";
+
   let totalSteps = 6;
   if (isOikos) totalSteps = 4;
   else if (isNewFamily) totalSteps = 6;
@@ -116,7 +137,7 @@ export default function App() {
   return (
     <div className="app-container">
       <div className="card-wrapper">
-                {/* 프로그레스 바 */}
+        {/* 프로그레스 바 */}
         <div className="progress-container">
           <div
             className="progress-bar"
@@ -124,9 +145,7 @@ export default function App() {
           ></div>
           <div
             className="runner"
-            style={{
-              left: `calc(${(step / totalSteps) * 100}% - 12px)`, // 캐릭터 크기 고려
-            }}
+            style={{ left: `calc(${(step / totalSteps) * 100}% - 12px)` }}
           >
             🐑
           </div>
@@ -194,14 +213,10 @@ export default function App() {
         {/* STEP 3 */}
         {step === 3 && (
           <div className="card">
-            <h2>
-              3️⃣ [사랑의교회 주일예배] 참석한 지체들의 이름을 선택해주세요.
-            </h2>
+            <h2>3️⃣ [사랑의교회 주일예배] 참석한 지체들의 이름을 선택해주세요.</h2>
             <p>
-              ✔️ 현장 참석만 포함입니다!
-              <br />
-              ✔️ 타교회 예배에 참석한 경우는 해당되지 않습니다.
-              <br />
+              ✔️ 현장 참석만 포함입니다! <br />
+              ✔️ 타교회 예배에 참석한 경우는 해당되지 않습니다. <br />
             </p>
             {students
               .slice()
@@ -219,8 +234,7 @@ export default function App() {
                       );
                     }}
                   />
-                  <span className="checkmark"></span>
-                  {s.name}
+                  <span className="checkmark"></span> {s.name}
                 </label>
               ))}
             <div className="btn-row">
@@ -237,12 +251,9 @@ export default function App() {
         {/* STEP 4 */}
         {step === 4 && (
           <div className="card">
-            <h2>
-              4️⃣ [대학5부 필그림 집회] 참석한 지체들의 이름을 선택해주세요.
-            </h2>
+            <h2>4️⃣ [대학5부 필그림 집회] 참석한 지체들의 이름을 선택해주세요.</h2>
             <p>
-              ✔️ 현장 참석 + 온라인 모두 포함입니다!
-              <br />
+              ✔️ 현장 참석 + 온라인 모두 포함입니다! <br />
               ✔️ 지각 또는 조퇴 모두 동일하게 출석으로 선택해주세요.
             </p>
             {students
@@ -261,14 +272,12 @@ export default function App() {
                       );
                     }}
                   />
-                  <span className="checkmark"></span>
-                  {s.name}
+                  <span className="checkmark"></span> {s.name}
                 </label>
               ))}
-
             <label>
-              💻 위 질문에서 선택한 지체 중 대학부 집회를 [온라인]으로 참석한
-              지체가 있다면, 해당 지체의 이름을 작성해주세요.
+              💻 위 질문에서 선택한 지체 중 대학부 집회를 [온라인]으로 참석한 지체가
+              있다면, 해당 지체의 이름을 작성해주세요.
             </label>
             <textarea
               className="ios-input"
@@ -277,7 +286,6 @@ export default function App() {
               onChange={(e) => setOnlineMembers(e.target.value)}
             />
 
-            {/* 새가족 그룹이면서 오이코스인 경우 STEP5,6 건너뛰도록 재라인업 제거 */}
             {!isNewFamily && (
               <>
                 <label>
@@ -289,7 +297,7 @@ export default function App() {
                   className="ios-input"
                   type="text"
                   value={missedMembers}
-                  onChange={(e) => setmissedMembers(e.target.value)}
+                  onChange={(e) => setMissedMembers(e.target.value)}
                 />
               </>
             )}
@@ -322,9 +330,7 @@ export default function App() {
           <div className="card">
             <h2>5️⃣ 방문자가 있다면 아래 양식에 맞추어 기입해주세요.</h2>
             <p>
-              ✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한
-              사람을 말합니다.
-              <br />
+              ✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다. <br />
               ✔️ 작성 양식) 방문자 신예현 / 인도자 이재원
             </p>
             <textarea
@@ -357,7 +363,6 @@ export default function App() {
               사랑하고 축복합니다 목자님들 🤎
             </p>
 
-            {/* 새가족 안내 문구 및 복사 버튼 */}
             {isNewFamily && (
               <div
                 style={{
@@ -368,7 +373,6 @@ export default function App() {
                 }}
               >
                 <p style={{ margin: 0 }}>작성 양식 복사</p>
-                {/* 작은 아이콘 버튼 */}
                 <button
                   className="btn btn-icon"
                   style={{
@@ -380,9 +384,7 @@ export default function App() {
                     justifyContent: "center",
                   }}
                   onClick={() =>
-                    setfeedback(
-                      "1주차:\n2주차:\n3주차:\n4주차 및 등반"
-                    )
+                    setFeedback("1주차:\n2주차:\n3주차:\n4주차 및 등반")
                   }
                   title="양식 복사"
                 >
@@ -396,14 +398,7 @@ export default function App() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <rect
-                      x="9"
-                      y="9"
-                      width="6"
-                      height="6"
-                      rx="1"
-                      ry="1"
-                    ></rect>
+                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
                 </button>
@@ -414,8 +409,9 @@ export default function App() {
               className="ios-input"
               type="text"
               value={feedback}
-              onChange={(e) => setfeedback(e.target.value)}
+              onChange={(e) => setFeedback(e.target.value)}
             />
+
             <div className="btn-row">
               <button className="btn btn-secondary" onClick={() => setStep(5)}>
                 <BackIcon /> 뒤로가기
@@ -443,3 +439,4 @@ export default function App() {
     </div>
   );
 }
+
