@@ -1,9 +1,18 @@
+
+
 // App.jsx
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 import "./App.css";
+import AdminAttendanceStatus from "./AdminAttendanceStatus";
 
 export default function App() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdmin = urlParams.get("admin") === "true";
+
+  if (isAdmin) return <AdminAttendanceStatus />;
+
+  // 기존 일반 사용자 출석부 로직
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [classes, setClasses] = useState([]);
@@ -17,14 +26,6 @@ export default function App() {
   const [visitors, setVisitors] = useState("");
   const [feedback, setfeedback] = useState("");
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("admin") === "true") {
-      setIsAdmin(true);
-      setStep(8);
-    }
-  }, []);
-
   const groupNameMap = {
     "1 약속들": "P 약속들",
     "2 향기들": "I 향기들",
@@ -35,7 +36,6 @@ export default function App() {
     "7 마음들": "M 마음들",
     "8 새가족들": "♥ 새가족들",
   };
-
   const classNameMap = groupNameMap;
 
   // 그룹 가져오기
@@ -76,10 +76,8 @@ export default function App() {
     fetchStudents();
   }, [selectedLeader]);
 
-  // 출석 저장
   const saveAttendance = async () => {
     const today = new Date().toISOString().split("T")[0];
-
     const records = students.map((s) => ({
       date: today,
       group_name: selectedGroup.name,
@@ -92,7 +90,6 @@ export default function App() {
       visitor_names: visitors,
       feedback: feedback,
     }));
-
     const { error } = await supabase.from("attendance").insert(records);
     if (error) alert("저장 실패: " + error.message);
     else setStep(7);
@@ -100,38 +97,18 @@ export default function App() {
 
   // 아이콘
   const BackIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
-
   const CheckIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 
   const isNewFamily = selectedGroup?.name === "8 새가족들";
   const isOikos = isNewFamily && selectedLeader?.name === "오이코스";
-
   let totalSteps = 6;
   if (isOikos) totalSteps = 4;
   else if (isNewFamily) totalSteps = 6;
@@ -139,7 +116,7 @@ export default function App() {
   return (
     <div className="app-container">
       <div className="card-wrapper">
-        {/* 프로그레스 바 */}
+                {/* 프로그레스 바 */}
         <div className="progress-container">
           <div
             className="progress-bar"
@@ -463,97 +440,6 @@ export default function App() {
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-export default function AdminAttendanceStatus() {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [groups, setGroups] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [statusList, setStatusList] = useState([]);
-
-  // 관리자 여부 체크
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("admin") === "true") {
-      setIsAdmin(true);
-    }
-  }, []);
-
-  // 그룹/반 가져오기
-  useEffect(() => {
-    async function fetchData() {
-      const { data: groupsData } = await supabase.from("groups").select("*");
-      const { data: classesData } = await supabase.from("classes").select("*");
-      setGroups(groupsData || []);
-      setClasses(classesData || []);
-    }
-    fetchData();
-  }, []);
-
-  // 제출 상태 계산
-  useEffect(() => {
-    if (!isAdmin || classes.length === 0) return;
-
-    async function fetchStatus() {
-      const today = new Date();
-      const threeDaysAgo = new Date();
-      threeDaysAgo.setDate(today.getDate() - 3);
-
-      const todayISO = today.toISOString().split("T")[0];
-      const threeDaysAgoISO = threeDaysAgo.toISOString().split("T")[0];
-
-      // 최근 3일간 출석 데이터
-      const { data: attendanceData } = await supabase
-        .from("attendance")
-        .select("*")
-        .gte("date", threeDaysAgoISO)
-        .lte("date", todayISO);
-
-      const status = classes.map((c) => {
-        // 해당 반 제출 여부 확인
-        const submitted = attendanceData.some(
-          (a) => a.leader === c.name
-        );
-        return {
-          className: c.name,
-          groupName: groups.find((g) => g.id === c.group_id)?.name || "",
-          submitted,
-        };
-      });
-
-      setStatusList(status);
-    }
-
-    fetchStatus();
-  }, [isAdmin, classes, groups]);
-
-  if (!isAdmin) return null;
-
-  return (
-    <div className="app-container">
-      <h1>📝 관리자 모드 - 출석 제출 현황</h1>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>그룹</th>
-            <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>반</th>
-            <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>제출 상태</th>
-          </tr>
-        </thead>
-        <tbody>
-          {statusList.map((s, idx) => (
-            <tr key={idx}>
-              <td style={{ padding: "8px" }}>{s.groupName}</td>
-              <td style={{ padding: "8px" }}>{s.className}</td>
-              <td style={{ padding: "8px", color: s.submitted ? "black" : "red", fontWeight: s.submitted ? "normal" : "bold" }}>
-                {s.submitted ? "제출 완료" : "미제출"}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }
