@@ -1,4 +1,3 @@
-// AdminAttendanceStatus.jsx
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 import "./App.css";
@@ -20,40 +19,51 @@ export default function AdminAttendanceStatus() {
     "8 새가족들": "♥ 새가족들",
   };
 
-  // 8/31 ~ 2/22 주일 날짜 배열
+  /* ===== 날짜 생성 (2026.03.01 ~ 2026.08.30) ===== */
   const sundayDates = [];
-  const start = new Date("2025-08-31");
-  const end = new Date("2026-02-22");
+  const start = new Date("2026-03-01");
+  const end = new Date("2026-08-30");
   const d = new Date(start);
+
   while (d <= end) {
     sundayDates.push(d.toISOString().split("T")[0]);
     d.setDate(d.getDate() + 7);
   }
 
+  /* ===== 오늘 기준 가장 최근 일요일 자동 선택 ===== */
   useEffect(() => {
-    if (sundayDates.length > 0) setSelectedDate(sundayDates[0]);
+    const today = new Date();
+    const pastSundays = sundayDates.filter(
+      (date) => new Date(date) <= today
+    );
+
+    if (pastSundays.length > 0) {
+      setSelectedDate(pastSundays[pastSundays.length - 1]);
+    } else if (sundayDates.length > 0) {
+      setSelectedDate(sundayDates[0]);
+    }
   }, []);
 
-  // 그룹 & 반 가져오기
+  /* ===== 그룹 & 반 데이터 ===== */
   useEffect(() => {
-    async function fetchGroupsAndClasses() {
+    async function fetchData() {
       const { data: groupData } = await supabase.from("groups").select("*");
-      setGroups(groupData || []);
-
       const { data: classData } = await supabase.from("classes").select("*");
+
+      setGroups(groupData || []);
       setClasses(classData || []);
     }
-    fetchGroupsAndClasses();
+    fetchData();
   }, []);
 
-  // 출석 데이터 가져오기 (선택 주일 + 3일)
+  /* ===== 출석 데이터 ===== */
   useEffect(() => {
     if (!selectedDate) return;
 
     async function fetchAttendance() {
       const startDate = new Date(selectedDate);
       const endDate = new Date(selectedDate);
-      endDate.setDate(endDate.getDate() + 2); // 일요일 포함 3일간
+      endDate.setDate(endDate.getDate() + 5);
 
       const { data } = await supabase
         .from("attendance")
@@ -63,6 +73,7 @@ export default function AdminAttendanceStatus() {
 
       setAttendance(data || []);
     }
+
     fetchAttendance();
   }, [selectedDate]);
 
@@ -72,68 +83,62 @@ export default function AdminAttendanceStatus() {
         a.leader === cls.name &&
         a.group_name === groups.find((g) => g.id === cls.group_id)?.name
     );
+return (
+  <div className="admin-page">
+    <div className="admin-wrapper">
 
-  return (
-    <div className="app-container" style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
-      <div className="card-wrapper" style={{ width: "600px" }}>
-        <div className="card" style={{ textAlign: "center" }}>
-          <h2 style={{ marginBottom: "12px" }}>📝 출석 제출 현황</h2>
+      <h2 className="admin-title">📝 출석 제출 현황</h2>
 
-          {/* 날짜 선택 드롭다운 */}
-          <label style={{ display: "block", margin: "12px 0" }}>
-            주일 선택 :{" "}
-            <select
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="ios-input"
-              style={{ padding: "4px 8px", width: "120px" }}
-            >
-              {sundayDates.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <table
-            className="attendance-table"
-            style={{ width: "100%", borderCollapse: "collapse", marginTop: "16px" }}
-          >
-            <thead>
-              <tr>
-                <th style={{ color: "#000", borderBottom: "1px solid #ccc", padding: "8px" }}>들</th>
-                <th style={{ color: "#000", borderBottom: "1px solid #ccc", padding: "8px" }}>리더</th>
-                <th style={{ color: "#000", borderBottom: "1px solid #ccc", padding: "8px" }}>제출 여부</th>
-              </tr>
-            </thead>
-            <tbody>
-              {classes
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((cls) => {
-                  const group = groups.find((g) => g.id === cls.group_id);
-                  return (
-                    <tr key={cls.id}>
-                      <td style={{ color: "#000", padding: "8px" }}>
-                        {groupNameMap[group?.name] || group?.name}
-                      </td>
-                      <td style={{ color: "#000", padding: "8px" }}>{cls.name}</td>
-                      <td
-                        style={{
-                          color: isSubmitted(cls) ? "#000" : "#ff4d4f",
-                          fontWeight: "bold",
-                          padding: "8px",
-                        }}
-                      >
-                        {isSubmitted(cls) ? "제출 완료" : "미제출"}
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </div>
+      <div className="date-picker">
+        <select
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+        >
+          {sundayDates.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
       </div>
+
+      <div className="group-grid">
+        {groups
+          .slice()
+          .sort((a, b) => a.name.localeCompare(b.name, "ko"))
+          .map((group) => {
+            const groupClasses = classes
+              .filter((cls) => cls.group_id === group.id)
+              .sort((a, b) => a.name.localeCompare(b.name, "ko"));
+
+            if (groupClasses.length === 0) return null;
+
+            return (
+              <div key={group.id} className="group-card">
+                <h3 className="group-title">
+                  {groupNameMap[group.name] || group.name}
+                </h3>
+
+                {groupClasses.map((cls) => (
+                  <div key={cls.id} className="leader-row">
+                    <span>{cls.name}</span>
+                    <span
+                      className={
+                        isSubmitted(cls)
+                          ? "status complete"
+                          : "status missing"
+                      }
+                    >
+                      {isSubmitted(cls) ? "제출 완료" : "미제출"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+      </div>
+
     </div>
-  );
+  </div>
+);
 }

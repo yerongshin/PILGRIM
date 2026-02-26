@@ -1,5 +1,9 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
-
+html, body, #root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
 body {
   font-family: "Pretendard", sans-serif;
   margin: 0;
@@ -244,10 +248,6 @@ body {
 
 /* 모바일 대응 - 중앙 정렬 유지 */
 @media (max-width: 480px) {
-  .app-container {
-    padding: 16px;          /* 모바일에서 여백 최소화 */
-    /* 중앙 정렬은 그대로 유지 */
-  }
   
   .card-wrapper {
     max-width: 100%;
@@ -382,3 +382,103 @@ body {
   transition: 0.2s;
 }
 
+
+.admin-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(135deg, #f9fafb, #eef2ff);
+  padding: 40px 16px;
+  box-sizing: border-box;
+}
+
+/* 내부 컨텐츠 중앙 고정 */
+.admin-wrapper {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.admin-title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+}
+
+.date-picker {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+/* 타이틀 중앙 */
+.admin-title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+}
+
+/* 날짜 선택 중앙 */
+.date-picker {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.date-picker select {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+/* 그룹 그리드 */
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* 카드 */
+.group-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.group-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #4f46e5;
+  text-align: center;
+}
+
+.leader-row {
+  display: flex;
+  justify-content: space-around;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.leader-row:last-child {
+  border-bottom: none;
+}
+
+.status {
+  font-weight: 600;
+}
+
+.complete {
+  color: #111;
+}
+
+.missing {
+  color: #ff4d4f;
+}
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .group-grid {
+    grid-template-columns: 1fr;
+  }
+}
