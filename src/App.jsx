@@ -151,7 +151,7 @@ export default function App() {
           </div>
         </div>
 
-        <h1 className="main-title">2025-2 필그림 출석부 📝</h1>
+        <h1 className="main-title">2026-1 필그림 출석부 📝</h1>
 
         {/* STEP 1 */}
         {step === 1 && (
@@ -333,7 +333,7 @@ export default function App() {
             <h2>5️⃣ 방문자가 있다면 아래 양식에 맞추어 기입해주세요.</h2>
             <p>
               ✔️ 새가족 등록은 하지 않았지만, 샘 모임 또는 필그림 집회에 방문한 사람을 말합니다. <br />
-              ✔️ 작성 양식) 방문자 신예현 / 인도자 이재원
+              ✔️ 작성 양식) 방문자 신예현 / 인도자 정유빈
             </p>
             <textarea
               className="ios-input"
@@ -362,7 +362,7 @@ export default function App() {
             </h2>
             <p>
               작성해주신 내용은 행정간사만 확인합니다! 자유롭게 남겨주세요 :) <br />
-              사랑하고 축복합니다 목자님들 🤎
+              사랑하고 축복합니다 목자님들 🤍
             </p>
 
             {isNewFamily && (
